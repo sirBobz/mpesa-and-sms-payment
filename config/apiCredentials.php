@@ -9,12 +9,13 @@ return [
     |
     */
     'mojagate_sms_service' => [
-        'api_key' => env('email', 'null'),
-        'username' => env('password', 'null'),
+        'email' => env('email', 'null'),
+        'password' => env('password', 'null'),
     ],
 
     'safaricom_payment_service' => [
-        'api_key' => env('consumer_key', 'null'),
-        'username' => env('consumer_secret', 'null'),
+        'consumer_key' => env('consumer_key', 'null'),
+        'consumer_secret' => env('consumer_secret', 'null'),
+        'passkey' => env('passkey', 'null'),
     ],
-]
+];

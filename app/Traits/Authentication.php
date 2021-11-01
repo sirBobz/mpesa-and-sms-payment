@@ -1,13 +1,12 @@
 <?php
 
 namespace App\Traits;
-
 use Config;
 
 trait Authentication
 {
 
-    public function authorization($short_code, $service_name)
+    public function authorization()
     {
 
         $this_url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials';
@@ -31,7 +30,7 @@ trait Authentication
 
     public function getCredentials(){
 
-        return base64_encode(trim(Config::get('safaricom_payment_service.consumer_key')) . ":" . trim(Config::get('safaricom_payment_service.consumer_secret')));
+        return base64_encode(trim(Config::get('apiCredentials.safaricom_payment_service.consumer_key')) . ":" . trim(Config::get('apiCredentials.safaricom_payment_service.consumer_secret')));
     }
 
 }
