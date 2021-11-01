@@ -10,6 +10,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Traits\PostData; 
 use Config;
+use Illuminate\Support\Facades\Redis;
 use App\Models\SmsTransaction;
 
 class SendSms implements ShouldQueue
@@ -47,11 +48,12 @@ class SendSms implements ShouldQueue
         $sms->from = $this->data->from;
         $sms->phone = $this->data->phone;
         $sms->message = $this->data->message;
+        $sms->payment_id = $this->data->payment_id;
         $sms->save();
         
 
         //get api response
-        $apiResponse = $this->sendPostRequest($data, $this->getToken(), $this->url);
+        $apiResponse = $this->sendPostRequest($data, $this->getTokenFromCache(), $this->url);
 
         $result = json_decode($apiResponse['response']);
 
@@ -84,5 +86,21 @@ class SendSms implements ShouldQueue
         curl_close($curl);
 
         return json_decode($response)->data->token;
+    }
+
+    private function getTokenFromCache()
+    {
+        //get token time and cache it
+        $token = Redis::get('current_token_for_the_period');
+
+        if ($cached_token >= date('Y-m-d H:i:s')) {
+
+            $token = $this->getToken();
+
+            Redis::set('current_token_for_the_period', $token);
+
+        }
+
+        return $token;
     }
 }

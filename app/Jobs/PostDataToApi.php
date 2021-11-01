@@ -52,8 +52,6 @@ class PostDataToApi implements ShouldQueue
     public function handle()
     {
 
-        dd($this->timestamp);
-
         // save transaction
         $payment = new PaymentTransaction();
         $payment->Amount =  $this->data->amount;
@@ -84,6 +82,7 @@ class PostDataToApi implements ShouldQueue
             'from' =>  "Tanda",
             'phone' => "254" . substr($this->data->phone_number, -9),
             'message' => "Please check your phone for a Push activation. Input your PIN to enable payment.",
+            'payment_id' => $payment->id,
         ];
 
         SendSms::dispatch((object) $data);
