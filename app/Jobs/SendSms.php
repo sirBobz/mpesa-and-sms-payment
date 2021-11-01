@@ -10,7 +10,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Traits\PostData; 
 use Config;
-use Illuminate\Support\Facades\Redis;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 use App\Models\SmsTransaction;
 
 class SendSms implements ShouldQueue
@@ -19,6 +20,7 @@ class SendSms implements ShouldQueue
 
     public $data;
     public $url;
+    public $webhook_url;
 
     /**
      * Create a new job instance.
@@ -29,6 +31,7 @@ class SendSms implements ShouldQueue
     {
         $this->data = $data;
         $this->url = "https://api.mojasms.dev/sendsms";
+        $this->webhook_url = "http://8da0-105-163-2-217.ngrok.io/api/sms";
     }
 
     /**
@@ -42,6 +45,7 @@ class SendSms implements ShouldQueue
             'from' =>  $this->data->from,
             'phone' => $this->data->phone,
             'message' => $this->data->message,
+            'webhook_url' => $this->webhook_url,
         ];
 
         $sms = new SmsTransaction();
@@ -58,9 +62,9 @@ class SendSms implements ShouldQueue
         $result = json_decode($apiResponse['response']);
 
         //save api response
-            // $sms->status = $result->status;
-            // $sms->message_id = $result->data[0]->message_id;
-            // $sms->save(); 
+        $sms->status = $result->status;
+        $sms->message_id = $result->data->recipients[0]->message_id;
+        $sms->save(); 
     }
 
 
@@ -90,17 +94,12 @@ class SendSms implements ShouldQueue
 
     private function getTokenFromCache()
     {
-        //get token time and cache it
-        $token = Redis::get('current_token_for_the_period');
-
-        if ($cached_token >= date('Y-m-d H:i:s')) {
-
-            $token = $this->getToken();
-
-            Redis::set('current_token_for_the_period', $token);
-
+        if (Cache::has('current_token_for_the_period')) {
+            return Cache::get('current_token_for_the_period');
         }
-
-        return $token;
+        else{
+            Cache::add('current_token_for_the_period', $token = $this->getToken(), Carbon::now()->year);
+            return $token;
+        }
     }
 }

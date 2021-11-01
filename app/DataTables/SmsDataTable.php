@@ -47,7 +47,7 @@ class SmsDataTable extends DataTable
                     ->columns($this->getColumns())
                     ->minifiedAjax()
                     ->dom('Bfrtip')
-                    ->orderBy(1)
+                    ->orderBy(0)
                     ->buttons(
                         Button::make('export'),
                     );
@@ -61,6 +61,7 @@ class SmsDataTable extends DataTable
     protected function getColumns()
     {
         return [
+            'delivered_at',
             'from',
             'phone',
             'message',
