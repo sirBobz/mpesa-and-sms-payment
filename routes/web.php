@@ -22,3 +22,5 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::get('/payments', [App\Http\Controllers\V1\MpesaOnlineController::class, 'index'])->name('payments');
+
+Route::get('/sms', [App\Http\Controllers\V1\SmsController::class, 'index'])->name('sms');

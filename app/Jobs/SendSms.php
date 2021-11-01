@@ -10,6 +10,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Traits\PostData; 
 use Config;
+use App\Models\SmsTransaction;
 
 class SendSms implements ShouldQueue
 {
@@ -42,7 +43,22 @@ class SendSms implements ShouldQueue
             'message' => $this->data->message,
         ];
 
-        $this->sendPostRequest($data, $this->getToken(), $this->url);
+        $sms = new SmsTransaction();
+        $sms->from = $this->data->from;
+        $sms->phone = $this->data->phone;
+        $sms->message = $this->data->message;
+        $sms->save();
+        
+
+        //get api response
+        $apiResponse = $this->sendPostRequest($data, $this->getToken(), $this->url);
+
+        $result = json_decode($apiResponse['response']);
+
+        //save api response
+            // $sms->status = $result->status;
+            // $sms->message_id = $result->data[0]->message_id;
+            // $sms->save(); 
     }
 
 

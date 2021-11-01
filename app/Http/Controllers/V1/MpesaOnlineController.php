@@ -4,15 +4,14 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Traits\Authentication;
+use App\DataTables\PaymentDataTable;
 
 class MpesaOnlineController extends Controller
 {
-    use Authentication;
 
-    public function index(){
+    public function index(PaymentDataTable $dataTable){
 
-        return view('v1.payments.index');
+        return $dataTable->render('v1.payments.index');
     }
    
 }

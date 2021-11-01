@@ -7,6 +7,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -29,6 +30,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $MpesaReceiptNumber
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * 
+ * @property Collection|SmsTransaction[] $sms_transactions
  *
  * @package App\Models
  */
@@ -52,4 +55,9 @@ class PaymentTransaction extends Model
 		'Balance',
 		'MpesaReceiptNumber'
 	];
+
+	public function sms_transactions()
+	{
+		return $this->hasMany(SmsTransaction::class, 'payment_id');
+	}
 }

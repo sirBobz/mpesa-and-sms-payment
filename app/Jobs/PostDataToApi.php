@@ -52,6 +52,8 @@ class PostDataToApi implements ShouldQueue
     public function handle()
     {
 
+        dd($this->timestamp);
+
         // save transaction
         $payment = new PaymentTransaction();
         $payment->Amount =  $this->data->amount;
@@ -70,7 +72,7 @@ class PostDataToApi implements ShouldQueue
             'TransactionType' => 'CustomerPayBillOnline',
             'Amount' => $this->data->amount,
             'PartyA' => "254" . substr($this->data->phone_number, -9),
-            'PartyB' => $this->partyB,
+            'PartyB' => $this->short_code,
             'PhoneNumber' => "254" . substr($this->data->phone_number, -9),
             'CallBackURL' => $this->confirmation_url,
             'AccountReference' => $this->AccountReference,
@@ -79,7 +81,7 @@ class PostDataToApi implements ShouldQueue
 
         //Send Sms
         $data = [
-            'from' =>  "MOJAGATE",
+            'from' =>  "Tanda",
             'phone' => "254" . substr($this->data->phone_number, -9),
             'message' => "Please check your phone for a Push activation. Input your PIN to enable payment.",
         ];

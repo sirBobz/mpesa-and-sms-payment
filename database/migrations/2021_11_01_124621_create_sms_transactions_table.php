@@ -14,12 +14,14 @@ class CreateSmsTransactionsTable extends Migration
     public function up()
     {
         Schema::create('sms_transactions', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('payment_id')->nullable()->index('payment_id');
             $table->string('from');
             $table->string('phone');
             $table->longText('message');
-            $table->string('webhook');
-            $table->string('status');
+            $table->string('message_id')->nullable();
+            $table->string('delivered_at', 50)->nullable();
+            $table->string('status')->nullable();
             $table->timestamps();
         });
     }

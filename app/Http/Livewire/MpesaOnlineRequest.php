@@ -11,8 +11,8 @@ class MpesaOnlineRequest extends Component
     public $phone_number;
 
     protected $rules = [
-        'amount' => 'required|max:10',
-        'phone_number' => 'required|max:20'
+        'phone_number' => 'required|numeric|digits_between:9,12',
+         'amount' => 'required|numeric|between:5,100000',
     ];
     public function submit()
     {
