@@ -12,7 +12,7 @@ class MpesaOnlineRequest extends Component
 
     protected $rules = [
         'phone_number' => 'required|numeric|digits_between:9,12',
-         'amount' => 'required|numeric|between:5,100000',
+         'amount' => 'required|numeric|between:1,100000',
     ];
     public function submit()
     {

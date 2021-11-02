@@ -67,11 +67,10 @@ class PaymentDataTable extends DataTable
             'PartyA',
             'ResponseDescription',
             'ResponseCode',
-            'CustomerMessage',
             'ResultCode',
             'ResultDesc',
             'Balance',
-            'MpesaReceiptNumber'
+            'CheckoutRequestID'
         ];
     }
 

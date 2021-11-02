@@ -22,8 +22,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $status
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property int|null $sms_type_id
  * 
  * @property PaymentTransaction|null $payment_transaction
+ * @property SmsType|null $sms_type
  *
  * @package App\Models
  */
@@ -32,7 +34,8 @@ class SmsTransaction extends Model
 	protected $table = 'sms_transactions';
 
 	protected $casts = [
-		'payment_id' => 'int'
+		'payment_id' => 'int',
+		'sms_type_id' => 'int'
 	];
 
 	protected $fillable = [
@@ -42,11 +45,17 @@ class SmsTransaction extends Model
 		'message',
 		'message_id',
 		'delivered_at',
-		'status'
+		'status',
+		'sms_type_id'
 	];
 
 	public function payment_transaction()
 	{
 		return $this->belongsTo(PaymentTransaction::class, 'payment_id');
+	}
+
+	public function sms_type()
+	{
+		return $this->belongsTo(SmsType::class);
 	}
 }

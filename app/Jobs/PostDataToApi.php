@@ -2,18 +2,17 @@
 
 namespace App\Jobs;
 
+use App\Jobs\SendSms;
+use App\Models\PaymentTransaction;
+use App\Traits\Authentication;
+use App\Traits\PostData;
+use Config;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use App\Models\PaymentTransaction;
 use Illuminate\Support\Str;
-use App\Traits\Authentication;
-use App\Traits\PostData;
-use Config;
-use App\Jobs\SendSms;
 
 class PostDataToApi implements ShouldQueue
 {
@@ -54,16 +53,36 @@ class PostDataToApi implements ShouldQueue
 
         // save transaction
         $payment = new PaymentTransaction();
-        $payment->Amount =  $this->data->amount;
+        $payment->Amount = $this->data->amount;
         $payment->PartyA = "254" . substr($this->data->phone_number, -9);
         $payment->AccountReference = $this->AccountReference;
         $payment->BusinessShortCode = $this->short_code;
-        $payment->partyB = $this->partyB;
+        $payment->partyB = $this->short_code;
         $payment->save();
 
+        //Send Sms
+        $data = [
+            'from' => "Tanda",
+            'phone' => "254" . substr($this->data->phone_number, -9),
+            'message' => "Please check your phone for a Push activation. Input your PIN to enable payment.",
+            'payment_id' => $payment->id,
+        ];
+
+        SendSms::dispatch((object) $data);
+
+        // send api call
+        $apiResponse = $this->sendPostRequest($this->formatData(), $this->authorization(), $this->post_url);
+
+        // save api response
+        $this->saveApiResponse($apiResponse, $payment);
+
+    }
+
+    private function formatData()
+    {
         // format post data
-        $post_data =
-        [
+        return
+            [
             'BusinessShortCode' => $this->short_code,
             'Password' => base64_encode($this->short_code . $this->pass_key . $this->timestamp),
             'Timestamp' => $this->timestamp,
@@ -74,29 +93,12 @@ class PostDataToApi implements ShouldQueue
             'PhoneNumber' => "254" . substr($this->data->phone_number, -9),
             'CallBackURL' => $this->confirmation_url,
             'AccountReference' => $this->AccountReference,
-            'TransactionDesc' => 'Online Payment'
+            'TransactionDesc' => 'Online Payment',
         ];
-
-
-        //Send Sms
-        $data = [
-            'from' =>  "Tanda",
-            'phone' => "254" . substr($this->data->phone_number, -9),
-            'message' => "Please check your phone for a Push activation. Input your PIN to enable payment.",
-            'payment_id' => $payment->id,
-        ];
-
-        SendSms::dispatch((object) $data);
-
-        // send api call
-        $apiResponse = $this->sendPostRequest($post_data, $this->authorization(), $this->post_url);
-
-        // save api response
-        $this->saveApiResponse($apiResponse, $payment);
-
     }
 
-    public function saveApiResponse($result, $payment){
+    public function saveApiResponse($result, $payment)
+    {
 
         $result = json_decode($result['response']);
 
