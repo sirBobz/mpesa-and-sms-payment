@@ -15,3 +15,5 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('/sms', [App\Http\Controllers\V1\SmsController::class, 'apiResult'])->name('apiResult');
+
+Route::post('/payment', [App\Http\Controllers\V1\MpesaOnlineController::class, 'apiResult'])->name('result');

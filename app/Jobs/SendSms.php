@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use App\Traits\PostData; 
+use App\Traits\PostData;
 use Config;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -31,7 +31,7 @@ class SendSms implements ShouldQueue
     {
         $this->data = $data;
         $this->url = "https://api.mojasms.dev/sendsms";
-        $this->webhook_url = "http://8da0-105-163-2-217.ngrok.io/api/sms";
+        $this->webhook_url = "https://5401-197-248-198-135.ngrok.io/api/sms";
     }
 
     /**
@@ -54,7 +54,7 @@ class SendSms implements ShouldQueue
         $sms->message = $this->data->message;
         $sms->payment_id = $this->data->payment_id;
         $sms->save();
-        
+
 
         //get api response
         $apiResponse = $this->sendPostRequest($data, $this->getTokenFromCache(), $this->url);
@@ -64,7 +64,7 @@ class SendSms implements ShouldQueue
         //save api response
         $sms->status = $result->status;
         $sms->message_id = $result->data->recipients[0]->message_id;
-        $sms->save(); 
+        $sms->save();
     }
 
 

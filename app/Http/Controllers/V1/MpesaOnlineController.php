@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\DataTables\PaymentDataTable;
 use App\Models\PaymentTransaction;
+use App\Jobs\SendSms;
 
 class MpesaOnlineController extends Controller
 {
@@ -49,5 +50,5 @@ class MpesaOnlineController extends Controller
         SendSms::dispatch((object) $data);
 
     }
-   
+
 }

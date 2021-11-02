@@ -36,11 +36,11 @@ class PostDataToApi implements ShouldQueue
     {
         $this->data = $data;
         $this->timestamp = preg_replace('/\D/', '', date('Y-m-d H:i:s'));
-        $this->confirmation_url = "https://api.statum.co.ke";
-        $this->short_code = "174379";
+        $this->confirmation_url = "https://5401-197-248-198-135.ngrok.io/api/payment";
+        $this->short_code = "709345";
         $this->pass_key = trim(Config::get('apiCredentials.safaricom_payment_service.passkey'));
         $this->AccountReference = Str::random(10);
-        $this->post_url = "https://sandbox.safaricom.co.ke/mpesa/stkpushquery/v1/query";
+        $this->post_url = "https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest";
         $this->partyB = "600000";
     }
 
@@ -76,6 +76,7 @@ class PostDataToApi implements ShouldQueue
             'AccountReference' => $this->AccountReference,
             'TransactionDesc' => 'Online Payment'
         ];
+
 
         //Send Sms
         $data = [
