@@ -12,7 +12,6 @@ class MpesaOnlineController extends Controller
 
     public function index(PaymentDataTable $dataTable)
     {
-
         return $dataTable->render('v1.payments.index');
     }
 
@@ -57,6 +56,7 @@ class MpesaOnlineController extends Controller
             'phone' => $transaction->PartyA,
             'message' => $message,
             'payment_id' => $transaction->id,
+            'smsType' => 'Payment Completion',
         ];
     }
 

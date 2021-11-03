@@ -3,6 +3,7 @@
 namespace App\DataTables;
 
 use App\Models\SmsTransaction;
+use FontLib\Table\Type\name;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Html\Editor\Editor;
@@ -32,7 +33,8 @@ class SmsDataTable extends DataTable
      */
     public function query(SmsTransaction $model)
     {
-        return $model->newQuery();
+        return $model->with('sms_type');
+
     }
 
     /**
@@ -65,7 +67,8 @@ class SmsDataTable extends DataTable
             'from',
             'phone',
             'message',
-            'status'
+            'status',
+            'sms_type.sms_type',
         ];
     }
 

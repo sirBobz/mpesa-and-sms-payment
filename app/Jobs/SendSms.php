@@ -6,6 +6,7 @@ use App\Models\SmsTransaction;
 use App\Traits\PostData;
 use Illuminate\Support\Str;
 use Config;
+use App\Models\SmsType;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -31,7 +32,7 @@ class SendSms implements ShouldQueue
     {
         $this->data = $data;
         $this->url = "https://api.mojasms.dev/sendsms";
-        $this->webhook_url = "https://5401-197-248-198-135.ngrok.io/api/sms";
+        $this->webhook_url = "http://8e1e-197-248-198-135.ngrok.io/api/sms";
         $this->uuid = Str::uuid()->toString();
     }
 
@@ -48,6 +49,7 @@ class SendSms implements ShouldQueue
             'message' => $this->data->message,
             'webhook_url' => $this->webhook_url,
             'message_id' => $this->uuid,
+
         ];
 
         $sms = new SmsTransaction();
@@ -55,6 +57,7 @@ class SendSms implements ShouldQueue
         $sms->phone = $this->data->phone;
         $sms->message = $this->data->message;
         $sms->payment_id = $this->data->payment_id;
+        $sms->sms_type_id = $this->getSmsTypeId($this->data->smsType);
         $sms->save();
 
         //get api response
@@ -68,6 +71,9 @@ class SendSms implements ShouldQueue
         $sms->save();
     }
 
+    private function getSmsTypeId($smsType){
+       return SmsType::where('sms_type', $smsType)->value('id');
+    }
     public function getToken()
     {
 

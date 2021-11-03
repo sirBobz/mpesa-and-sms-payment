@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSmsTypesTable extends Migration
+class ChangeDeliveryPayloadToJsonOnSmsTransactionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,8 @@ class CreateSmsTypesTable extends Migration
      */
     public function up()
     {
-        Schema::create('sms_types', function (Blueprint $table) {
-            $table->id();
-            $table->string('sms_type');
-            $table->timestamps();
+        Schema::table('sms_transactions', function (Blueprint $table) {
+            $table->json('delivery_payload')->nullable()->change();
         });
     }
 
@@ -27,6 +25,8 @@ class CreateSmsTypesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sms_types');
+        Schema::table('sms_transactions', function (Blueprint $table) {
+            Schema::dropIfExists('delivery_payload');
+        });
     }
 }

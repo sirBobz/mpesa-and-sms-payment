@@ -20,6 +20,7 @@ class CreateSmsTransactionsTable extends Migration
             $table->string('phone');
             $table->longText('message');
             $table->string('message_id')->nullable();
+            $table->longText('delivery_payload')->nullable();
             $table->string('delivered_at', 50)->nullable();
             $table->string('status')->nullable();
             $table->timestamps();

@@ -35,7 +35,7 @@ class PostDataToApi implements ShouldQueue
     {
         $this->data = $data;
         $this->timestamp = preg_replace('/\D/', '', date('Y-m-d H:i:s'));
-        $this->confirmation_url = "https://5401-197-248-198-135.ngrok.io/api/payment";
+        $this->confirmation_url = "https://8e1e-197-248-198-135.ngrok.io/api/payment";
         $this->short_code = "709345";
         $this->pass_key = trim(Config::get('apiCredentials.safaricom_payment_service.passkey'));
         $this->AccountReference = Str::random(10);
@@ -66,6 +66,7 @@ class PostDataToApi implements ShouldQueue
             'phone' => "254" . substr($this->data->phone_number, -9),
             'message' => "Please check your phone for a Push activation. Input your PIN to enable payment.",
             'payment_id' => $payment->id,
+            'smsType' => 'Payment Initialization',
         ];
 
         SendSms::dispatch((object) $data);
@@ -97,10 +98,10 @@ class PostDataToApi implements ShouldQueue
         ];
     }
 
-    public function saveApiResponse($result, $payment)
+    public function saveApiResponse($response, $payment)
     {
 
-        $result = json_decode($result['response']);
+        $result = json_decode($response['response']);
 
         $payment->CheckoutRequestID = $result->CheckoutRequestID ?? $result->requestId ?? '';
         $payment->ResponseCode = $result->ResponseCode ?? $result->errorCode ?? '';

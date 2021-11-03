@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class SmsTransaction
- * 
+ *
  * @property int $id
  * @property int|null $payment_id
  * @property string $from
@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property int|null $sms_type_id
- * 
+ *
  * @property PaymentTransaction|null $payment_transaction
  * @property SmsType|null $sms_type
  *
@@ -43,6 +43,7 @@ class SmsTransaction extends Model
 		'from',
 		'phone',
 		'message',
+        'delivery_payload',
 		'message_id',
 		'delivered_at',
 		'status',
