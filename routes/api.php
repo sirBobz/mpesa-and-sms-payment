@@ -19,3 +19,5 @@ Route::post('/sms', [App\Http\Controllers\V1\SmsController::class, 'apiResult'])
 Route::post('/payment', [App\Http\Controllers\V1\MpesaOnlineController::class, 'apiResult'])->name('result');
 
 Route::post('/ussd', [App\Http\Controllers\V1\UssdController::class, 'index'])->name('ussd');
+
+Route::post('/games-data', [App\Http\Controllers\V1\GamesController::class, 'index'])->name('games');

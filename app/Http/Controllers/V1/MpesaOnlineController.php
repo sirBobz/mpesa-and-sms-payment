@@ -17,7 +17,6 @@ class MpesaOnlineController extends Controller
 
     public function apiResult()
     {
-
         $request = json_decode(trim(file_get_contents('php://input')));
 
         foreach ($request->Body->stkCallback->CallbackMetadata->Item ?? [] as $item) {

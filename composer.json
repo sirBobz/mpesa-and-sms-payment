@@ -17,7 +17,8 @@
         "laravel/ui": "^3.3",
         "livewire/livewire": "^2.7",
         "yajra/laravel-datatables": "1.5",
-        "yajra/laravel-datatables-oracle": "~9.0"
+        "yajra/laravel-datatables-oracle": "~9.0",
+      "ext-json": "*"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
