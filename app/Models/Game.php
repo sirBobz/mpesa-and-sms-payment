@@ -14,13 +14,15 @@ use Illuminate\Database\Eloquent\Model;
  * Class Game
  * 
  * @property int $id
- * @property Carbon $date_of_play
- * @property int $home_team_id
- * @property int $away_team_id
+ * @property int $league_id
+ * @property string|null $date_of_play
+ * @property string|null $game_id
+ * @property string $home_team
+ * @property string $away_team
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * 
- * @property Team $team
+ * @property League $league
  * @property Collection|Market[] $markets
  *
  * @package App\Models
@@ -30,23 +32,20 @@ class Game extends Model
 	protected $table = 'games';
 
 	protected $casts = [
-		'home_team_id' => 'int',
-		'away_team_id' => 'int'
-	];
-
-	protected $dates = [
-		'date_of_play'
+		'league_id' => 'int'
 	];
 
 	protected $fillable = [
+		'league_id',
 		'date_of_play',
-		'home_team_id',
-		'away_team_id'
+		'game_id',
+		'home_team',
+		'away_team'
 	];
 
-	public function team()
+	public function league()
 	{
-		return $this->belongsTo(Team::class, 'home_team_id');
+		return $this->belongsTo(League::class);
 	}
 
 	public function markets()

@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * 
  * @property int $id
  * @property int $game_id
- * @property array $selections
+ * @property array $markets
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * 
@@ -28,12 +28,12 @@ class Market extends Model
 
 	protected $casts = [
 		'game_id' => 'int',
-		'selections' => 'json'
+		'markets' => 'json'
 	];
 
 	protected $fillable = [
 		'game_id',
-		'selections'
+		'markets'
 	];
 
 	public function game()

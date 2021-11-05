@@ -17,7 +17,7 @@ class CreateMarketsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('game_id');
             $table->foreign('game_id')->references('id')->on('games');
-            $table->jsonb('selections');
+            $table->jsonb('markets');
             $table->timestamps();
         });
     }

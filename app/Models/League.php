@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * 
- * @property Collection|Team[] $teams
+ * @property Collection|Game[] $games
  *
  * @package App\Models
  */
@@ -30,8 +30,8 @@ class League extends Model
 		'name'
 	];
 
-	public function teams()
+	public function games()
 	{
-		return $this->hasMany(Team::class);
+		return $this->hasMany(Game::class);
 	}
 }
