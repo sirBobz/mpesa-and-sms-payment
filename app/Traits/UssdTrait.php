@@ -15,17 +15,25 @@ trait UssdTrait
         return Game::where('league_id', $league_id)->orderBy('id')->get();
     }
 
-    public  function  getSelections($game_id){
-        $markets_data = Market::where('game_id', $game_id)->value('markets');
-
-        if ($markets_data) {
-
-        }
-
-
+    public  function  getCategoryName($game_id){
+       return Market::where('game_id', $game_id)->value('markets');
     }
 
-    private  function getDataFromSelection($data){
+    public function getSelections($latest_input, $game_id){
+
+        $selections= "";
+        foreach($this->getCategoryName($game_id) as $categoryName){
+           
+            if($this->counter == $latest_input){
+               return $selections = $categoryName['selections'];
+
+           }
+           $this->counter ++;
+        }
+          
+    }
+
+    private  function getDataFromSelection($markets_data){
         foreach ($value['markets'] as $market) {
 
             $market_name = $market['name'];

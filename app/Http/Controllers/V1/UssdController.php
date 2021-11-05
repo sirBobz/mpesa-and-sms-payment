@@ -10,6 +10,11 @@ class UssdController extends Controller
 {
     use UssdTrait;
 
+    public $counter;
+
+    public function __construct(){
+        $this->counter = 0;
+    }
    public  function index(Request $request)
    {
        $session_id   = $request->get('sessionId');
@@ -20,39 +25,34 @@ class UssdController extends Controller
        $ussd_string_exploded = explode("*", $text);
        $level = count($ussd_string_exploded);
        $last_input = $ussd_string_exploded [sizeof($ussd_string_exploded) - 1];
+       $previous_input = $ussd_string_exploded [sizeof($ussd_string_exploded) - 2];
 
        if ($text == '') {
-           // first question leagues options concatenated
            $response = "CON What league would you want to bet on \n";
           foreach ($this->getLeagues() as $league){
               $response .= $league->id . ". " . $league->name . " \n";
           }
 
        }elseif ($level == 1 && !empty($text)) {
-           // second menu first question
            $response = "CON What game would you want to bet on \n";
-           //game options concatenated
            foreach ($this->getGames($text) as $game){
                $response .= $game->id . ". " . $game->home_team . " vs " . $game->away_team . " \n";
            }
-           //end of second session
+
        }elseif ($level == 2 && !empty($text)){
-           // fourth menu first question
-           $response = "CON What option would you want to bet on \n";
-           //game options concatenated
-           return $this->getSelections($last_input);
-//           foreach ($this->getSelections($last_input) as $selection){
-//               $response .= $game->id . ". " . $game->home_team . " vs " . $game->away_team . " \n";
-//           }
-           //end of fourth session
-       }elseif ($request->text == '1*1*1'){
+           $response = "CON What category would you want to bet on \n";
+          foreach ($this->getCategoryName($last_input) as $category){
+              $response .= $this->counter . " " . $category['name'] . " \n";
+              $this->counter ++;
+          }
+
+       }elseif ($level == 3 && !empty($text)){
            // fifth menu fifth question
-           $response = "CON place your bet \n";
-           //game options concatenated
-           $response .= "1. Home team odds \n";
-           $response .= "2. Draw  odds \n";
-           $response .= "3. Away team odds \n";
-           //end of fifth session
+           $response = "CON Pick your category \n";
+          foreach(json_decode($this->getSelections($last_input, $previous_input), true) as $selections){
+            $response .= $this->counter . " " . $selections['name'] . " \n";
+            $this->counter ++;
+          }
        }
 
        header('Content-type: text/plain');
