@@ -1,79 +1,72 @@
 <?php
 
 namespace App\Traits;
+
 use App\Models\Game;
 use App\Models\League;
 use App\Models\Market;
+use App\Jobs\PostDataToApi;
 
 trait UssdTrait
 {
-    public function getLeagues(){
+    public function getLeagues()
+    {
         return League::orderBy('id')->get();
     }
 
-    public  function getGames($league_id){
+    public  function getGames($league_id)
+    {
         return Game::where('league_id', $league_id)->orderBy('id')->get();
     }
 
-    public  function  getCategoryName($game_id){
-       return Market::where('game_id', $game_id)->value('markets');
+    public  function  getCategoryName($game_id)
+    {
+        return Market::where('game_id', $game_id)->value('markets');
     }
 
-    public function getSelections($latest_input, $game_id){
+    public function getSelections($latest_input, $game_id)
+    {
 
-        $selections= "";
-        foreach($this->getCategoryName($game_id) as $categoryName){
-           
-            if($this->counter == $latest_input){
-               return $selections = $categoryName['selections'];
+        foreach ($this->getCategoryName($game_id) as $categoryName) {
 
-           }
-           $this->counter ++;
+            if ($this->counter == $latest_input) {
+                return $categoryName['selections'];
+            }
+            $this->counter++;
         }
-          
     }
 
-    private  function getDataFromSelection($markets_data){
-        foreach ($value['markets'] as $market) {
+    public function calculatePossibleWin($current_input, $last_input, $pre_previous_input, $game_id, $phone_number)
+    {
+        $total_win = 0;
 
-            $market_name = $market['name'];
-            $market_code = $market['code'];
-
-            if ($market['name'] === 'Who to win') {
-
-                foreach ($market['selections'] as $selections_key => $selections_value) {
-                    $market_name = $market['name'];
-                    if ($selections_key == '1'){
-                        $home_team_win_odds = $selections_value;
-                    }elseif ($selections_key == 'x'){
-                        $draw_odds = $selections_value;
-                    }elseif ($selections_key == '2'){
-                        $away_win_odds = $selections_value;
-                    }
-
-                }
+        foreach ($this->getSelections($pre_previous_input, $game_id) as $key => $value) {
+            if ($this->counter == $last_input) {
+                $total_win = $value * $current_input;
+                continue;
             }
-            if ($market['name'] === 'Who to score') {
-
-                foreach ($market['selections'] as $selections_key => $selections_value) {
-                    if ($selections_key == 'ng'){
-                        $no_goal = $selections_value;
-                    }elseif ($selections_key == 'gg'){
-                        $goal_goal = $selections_value;
-                    }
-                }
-            }
-
-            if ($market['name'] === 'Number of goals') {
-
-                foreach ($market['selections'] as $selections_key => $selections_value) {
-                    if ($selections_key == 'o2.5'){
-                        $over_two_point_five = $selections_value;
-                    }elseif ($selections_key == 'u.2.5'){
-                        $under_two_point_five = $selections_value;
-                    }
-                }
-            }
+            $this->counter++;
         }
+
+        //Dispatch data to queue
+        PostDataToApi::dispatch((object) ['amount' => $total_win, 'phone_number' => $phone_number]);
+
+        return $total_win;
+    }
+
+    public function getKeyFromData($data)
+    {
+        $key_value =
+            [
+                '1' => 'home team win odds',
+                'x' => 'draw odds',
+                '2' => 'away team win odds',
+                'ng' => 'no goal odds',
+                'gg' => 'goal goal odds',
+                'o2.5' => 'over two point five odds',
+                'u.2.5' => 'under two point five odds'
+            ];
+
+        return $key_value[$data];
     }
 }

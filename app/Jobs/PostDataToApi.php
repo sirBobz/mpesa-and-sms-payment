@@ -6,7 +6,7 @@ use App\Jobs\SendSms;
 use App\Models\PaymentTransaction;
 use App\Traits\Authentication;
 use App\Traits\PostData;
-use Config;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -69,14 +69,13 @@ class PostDataToApi implements ShouldQueue
             'smsType' => 'Payment Initialization',
         ];
 
-        SendSms::dispatch((object) $data);
+        //SendSms::dispatch((object) $data);
 
         // send api call
         $apiResponse = $this->sendPostRequest($this->formatData(), $this->authorization(), $this->post_url);
 
         // save api response
         $this->saveApiResponse($apiResponse, $payment);
-
     }
 
     private function formatData()
@@ -84,18 +83,18 @@ class PostDataToApi implements ShouldQueue
         // format post data
         return
             [
-            'BusinessShortCode' => $this->short_code,
-            'Password' => base64_encode($this->short_code . $this->pass_key . $this->timestamp),
-            'Timestamp' => $this->timestamp,
-            'TransactionType' => 'CustomerPayBillOnline',
-            'Amount' => $this->data->amount,
-            'PartyA' => "254" . substr($this->data->phone_number, -9),
-            'PartyB' => $this->short_code,
-            'PhoneNumber' => "254" . substr($this->data->phone_number, -9),
-            'CallBackURL' => $this->confirmation_url,
-            'AccountReference' => $this->AccountReference,
-            'TransactionDesc' => 'Online Payment',
-        ];
+                'BusinessShortCode' => $this->short_code,
+                'Password' => base64_encode($this->short_code . $this->pass_key . $this->timestamp),
+                'Timestamp' => $this->timestamp,
+                'TransactionType' => 'CustomerPayBillOnline',
+                'Amount' => $this->data->amount,
+                'PartyA' => "254" . substr($this->data->phone_number, -9),
+                'PartyB' => $this->short_code,
+                'PhoneNumber' => "254" . substr($this->data->phone_number, -9),
+                'CallBackURL' => $this->confirmation_url,
+                'AccountReference' => $this->AccountReference,
+                'TransactionDesc' => 'Online Payment',
+            ];
     }
 
     public function saveApiResponse($response, $payment)
@@ -108,5 +107,4 @@ class PostDataToApi implements ShouldQueue
         $payment->ResponseDescription = $result->ResponseDescription ?? $result->errorMessage ?? '';
         $payment->save();
     }
-
 }
